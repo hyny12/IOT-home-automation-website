@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Smart Home</title>
+    <style>
+        body {
+            margin: 0;
+            background-image:url(https://www.smarthouseintegration.com/wp-content/uploads/2020/09/home-automation.jpg);
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+        
+        /* styles.css */
+        .slide-container {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        }
+
+        .slide-checkbox {
+        display: none;
+        }
+
+        .slide-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 60px;
+        height: 30px;
+        border-radius: 15px;
+        background-color: #ccc;
+        cursor: pointer;
+        }
+
+        .slide-label:before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: #fff;
+        transition: transform 0.3s ease;
+        }
+
+        .slide-checkbox:checked + .slide-label {
+        background-color: #2196F3; /* Green background color when the button is ON */
+        }
+
+        .slide-checkbox:checked + .slide-label:before {
+        transform: translateX(30px); /* Move the circle to the right when the button is ON */
+        }
+
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 100px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 1000px;
+            margin: 50px auto;
+            position: relative;
+        }
+
+        h1 {justify-content: center;
+            font-weight: bold;
+            font-size: 36px;
+            margin-top: -42px;
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            width: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            color: black;
+        }
+
+        .data-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 200px;
+            text-align: center;
+        }
+
+        .temperature-box {
+            margin-right: 40px;
+        }
+
+        .humidity-box {
+            margin-right: 40px;
+        }
+        .luminance-box{
+            margin-right:40px;}
+
+         /* Hide the default checkbox */
+input[type="checkbox"] {
+  display: none;
+}
+
+/* Style for the slider */
+.slider {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  background-color: #ccc;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: background-color 0.4s;
+}
+
+/* Style for the sliding part */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s;
+}
+
+/* Style for the slider when it's checked (ON state) */
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+/* Style for the sliding part when the slider is checked (ON state) */
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+        
+        .im img{
+            
+            height: 75px;
+            margin: 4px 5px;
+        }
+        .Switch {
+    display: flex;
+    margin-top: 3rem;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.Switch .bi{margin-left: 5rem;
+margin-right:5rem ;}
+
+.box .img img{
+      width: 17%;
+      height:2rem;
+}
+
+
+        
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>My Smart Home</h1>
+        <div class="details"><div class="data-container">
+            <div class="box temperature-box">
+                <div class="im"><img src="img/5.png"></div>
+                <p>TEMPERATURE</p>
+                 <p id="tem"></p><p>°C</p>
+            </div>
+            
+            <div class="box humidity-box">
+                <div class="im"><img src="img/7.png"></div>
+                <p>HUMIDITY</p>
+                <p id="hum"></p><p>%</p>
+            </div>
+            
+            <div class="box luminance-box">
+                <div class="im"><img src="img/9.png"></div>
+                <p>LUMINANCE</p>
+                <p id="lum"></p>
+            </div>
+        </div>
+            
+        <div class="Switch">
+            <div class="box slide-container">
+                <span class="img"><img src="img/bulb.png"></span>
+                <input type="checkbox" id="slideswitch0" onclick="handleSlideButton()">
+                <label for="slideswitch0" class="slider"></label>
+            </div>
+            
+            
+            <div class="box bi slide-container">
+                 <span class="img"><img src="img/setting.png"></span>
+                <input type="checkbox" id="slideswitch" onclick="toggleLoop()">
+                <label for="slideswitch" class="slider"></label>
+            </div>
+            
+            <div class="box slide-container">
+                <span class="img"><img src="img/fan.png"></span>
+                <input type="checkbox" id="slideswitch1" onclick="control_motor()">
+                <label for="slideswitch1" class="slider"></label>
+            </div>
+        </div>
+    </div>
+    <script>
+        function handleSlideButton() {
+            const slideBtn = document.getElementById('slideBtn');
+            const newState = slideBtn.checked ? 'on' : 'off';
+
+            // Make an AJAX request to the PHP script to control the LED
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = xhr.responseText;
+                    console.log(response); // Log the response from the PHP script (optional)
+                }
+            };
+            xhr.send('action=' + newState);
+        }
+        
+        function controlMotor(action) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'control_motor.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = xhr.responseText;
+                    console.log(response); // Log the response from the PHP script (optional)
+                }
+            };
+            xhr.send('action=' + action);
+        }
+        
+       function toggleLoop() {
+            // Make an AJAX request to the PHP script to toggle the loop in ESP32
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', 'toggle_loop.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var response = xhr.responseText;
+                    onsole.log(response); // Log the response from the PHP script (optional)
+                }
+            };
+            xhr.send();
+        }
+    
+    </script>
+</body>
+</html>
